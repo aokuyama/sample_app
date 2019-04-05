@@ -10,7 +10,13 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", about_path
     assert_select "a[href=?]", contact_path
     assert_select "a[href=?]", signup_path
+    assert_select "a[href=?]", users_path, count: 0
     get contact_path
     assert_select "title", full_title("Contact")
+  end
+  test "logged layout links" do
+    log_in_as users(:michael)
+    get root_path
+    assert_select "a[href=?]", users_path
   end
 end
