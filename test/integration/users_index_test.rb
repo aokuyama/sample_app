@@ -29,4 +29,20 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     get users_path
     assert_select 'a', text: 'delete', count: 0
   end
+  
+  test "index no activated" do
+    log_in_as(@admin)
+    get users_path
+    assert_select 'a[href=?]', user_path(@non_admin), text: @non_admin.name
+    @non_admin.update! activated: false
+    get users_path
+    assert_select 'a[href=?]', user_path(@non_admin), text: @non_admin.name, count: 0
+  end
+  test "show no activated" do
+    get user_path(@non_admin)
+    assert_template 'users/show'
+    @non_admin.update! activated: false
+    get user_path(@non_admin)
+    assert_redirected_to root_url
+  end
 end
